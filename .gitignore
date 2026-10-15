@@ -2,7 +2,7 @@
 .venv/
 __pycache__/
 AGENTS.md
-check_task1.py
+check_task*.py
 *.pyc
 .venv*/
 notes.txt
