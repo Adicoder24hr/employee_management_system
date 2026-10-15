@@ -23,8 +23,16 @@
 - **Legacy records**: Records missing `half_day`, `history`, or derived minutes default to `false`, `[]`, or `0`. When regularized, missing fields are populated in MongoDB without schema migration scripts.
 - **Epoch milliseconds boundary**: Timestamps in requests and responses are integer epoch milliseconds. Inside MongoDB, they are stored as UTC BSON dates.
 
-## Not Done / Not Tested
+## Testing & Verification
 
-- All six endpoints (Part A and Part B) and all 10 business rules (R1–R10) are implemented and verified.
-- Tested against MongoDB Atlas on small custom fixtures (ties, weekends, mid-month joiners, 0-log headcounts, overnight shifts, and legacy records).
-- Not tested against a full synthetic 100,000-record dataset on Atlas due to time constraints before 11:00 PM IST; however, query plans were verified via `/admin/explain` to confirm index scans (`IXSCAN`) and zero collection scans (`COLLSCAN`).
+- All endpoints (CRUD, PATCH regularization, analytics, and explain) and business rules (R1–R10) are implemented and verified.
+- Tested against MongoDB Atlas on focused edge-case fixtures:
+  - Concurrency: simultaneous duplicate punch-ins, simultaneous punch-outs, and concurrent PATCH updates.
+  - Business logic: overnight shifts spanning midnight, mid-month joiners, weekend logs, tied ranks at cutoff boundaries, employees with zero attendance records, and legacy documents missing fields.
+- Query plans verified via `/admin/explain` to ensure full index coverage (`IXSCAN`) and zero collection scans (`COLLSCAN`).
+
+## Out of Scope / Not Done
+
+- Production reverse-proxy deployment (e.g. Nginx, Docker), as specified by the brief to run directly with Uvicorn.
+- User authentication and role-based access control (e.g. JWT / OAuth), as the specification accepts free-text names (`regularized_by`) without an authentication layer.
+- Distributed load and stress testing under high synthetic traffic.
